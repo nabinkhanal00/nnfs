@@ -3,6 +3,7 @@ from numpy._typing import NDArray
 from dense import Dense
 from activations import Layer, Tanh
 from losses import mse, mse_prime
+from network import train, predict
 
 import numpy as np
 
@@ -13,21 +14,8 @@ Y: NDArray[Any] = np.array(
 
 network: list[Layer] = [Dense(2, 3), Tanh(), Dense(3, 1), Tanh()]
 
-epochs: int = 10_000
-learning_rate: float = 0.1
+train(network, mse, mse_prime, X, Y, 100000, 0.01, False)
 
-for e in range(epochs):
-    error: float = 0
-    for x, y in zip(X, Y):
-        output = x
-        for layer in network:
-            output = layer.forward(output)
+output = predict(network, [[0], [1]])
 
-        error += mse(y, output)
-        grad = mse_prime(y, output)
-
-        for layer in reversed(network):
-            grad = layer.backward(grad, learning_rate)
-    error /= len(X)
-    if e % 1000 == 999:
-        print(f"{e+1}/{epochs}, error={error}")
+print(output)
